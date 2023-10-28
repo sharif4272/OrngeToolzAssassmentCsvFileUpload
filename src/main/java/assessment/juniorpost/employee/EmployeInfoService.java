@@ -1,7 +1,6 @@
 package assessment.juniorpost.employee;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,22 +31,22 @@ public class EmployeInfoService {
             BufferedReader br = new BufferedReader(new FileReader(file1));
             String line;
 
-            String header = br.readLine();
+            String header = br.readLine(); // This part is for file header skip
 
-                while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
 
-                    linesBatch.add(line);
-                    if (linesBatch.size() == BATCH_SIZE) {
-                        executor.submit(new EmployeeTaskExecutor(employeInfoRepository,new ArrayList<>(linesBatch)));
-                        linesBatch.clear();
-                    }
-                }
-                if (!linesBatch.isEmpty() && linesBatch.size() < BATCH_SIZE) {
-                    executor.submit(new EmployeeTaskExecutor(employeInfoRepository,new ArrayList<>(linesBatch)));
+                linesBatch.add(line);
+                if (linesBatch.size() == BATCH_SIZE) {
+                    executor.submit(new EmployeeTaskExecutor(employeInfoRepository, new ArrayList<>(linesBatch)));
                     linesBatch.clear();
                 }
-                executor.shutdown();
-                file1.delete();
+            }
+            if (!linesBatch.isEmpty() && linesBatch.size() < BATCH_SIZE) {
+                executor.submit(new EmployeeTaskExecutor(employeInfoRepository, new ArrayList<>(linesBatch)));
+                linesBatch.clear();
+            }
+            executor.shutdown();
+            file1.delete();
 
 
         } catch (IOException e) {

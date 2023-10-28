@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
-import java.util.Map;
 
 @Controller
 public class EmployeeController {
@@ -34,8 +32,13 @@ public class EmployeeController {
     }
 
     @PostMapping("/file-upload-save")
-    public String uploadAndSaveExcelFile(@RequestParam("file") MultipartFile file, HttpSession session) {
+    public String uploadAndSaveExcelFile(@RequestParam("file") MultipartFile file) {
         employeInfoService.storeData(file);
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return "redirect:/list-page";
 
     }
